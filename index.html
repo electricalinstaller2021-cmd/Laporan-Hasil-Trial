@@ -26,6 +26,17 @@
             body { background: white !important; }
             .no-print { display: none !important; }
             .print-shadow { box-shadow: none !important; }
+            .page-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
+            tr { page-break-inside: avoid; break-inside: avoid; }
+        }
+        /* Page break prevention rules for PDF generation */
+        .page-break-inside-avoid {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -78,7 +89,7 @@
 
                 <div>
                     <label class="block text-xs font-medium text-slate-600 mb-1">Nama Mesin / Proyek <span class="text-rose-500">*</span></label>
-                    <input type="text" id="projectTitle" value="Automatic High-Speed Packaging Machine Line B" placeholder="Contoh: Automatic High-Speed Packaging Machine Line B" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" oninput="updatePreview()">
+                    <input type="text" id="projectTitle" value="Automatic High-Speed Drilling Machine Unit A" placeholder="Contoh: Automatic High-Speed Drilling Machine Unit A" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" oninput="updatePreview()">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -94,72 +105,86 @@
 
                 <div>
                     <label class="block text-xs font-medium text-slate-600 mb-1">Deskripsi Teknis Mesin / Spesifikasi Utama <span class="text-rose-500">*</span></label>
-                    <textarea id="machineDescription" rows="3" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" oninput="updatePreview()">Evaluasi komprehensif performa elektromekanis mesin kemas otomatis kecepatan tinggi untuk memastikan stabilitas operasional kontinu pada parameter kapasitas 120 pack per menit (ppm).</textarea>
+                    <textarea id="machineDescription" rows="3" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" oninput="updatePreview()">Evaluasi komprehensif performa elektromekanis mesin drilling otomatis untuk menguji kestabilan feeding, waktu pemakanan, serta tingkat akurasi kedalaman lubang pada berbagai variasi frekuensi.</textarea>
                 </div>
             </div>
 
-            <!-- 2. Action Trial yang Dilakukan (Dinamis / Bisa ditambah) -->
+            <!-- 2. Data Hasil Trial / Pengukuran Parameter (CRUD) -->
+            <div class="space-y-4 pt-4 border-t border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-table-columns text-indigo-600"></i>
+                        <span>2. Data Hasil Pengukuran & Parameter Trial</span>
+                    </h2>
+                    <button onclick="addTrialDataRow()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg border border-indigo-200 transition flex items-center space-x-1">
+                        <i class="fa-solid fa-plus text-[10px]"></i>
+                        <span>Tambah Data</span>
+                    </button>
+                </div>
+                <p class="text-xs text-slate-500">Catat parameter operasional mesin (misal: feeding 10 Hz) beserta hasil waktu atau performa yang didapat.</p>
+                
+                <div id="trialDataContainer" class="space-y-3">
+                    <!-- Dinamis item akan di-generate via JavaScript -->
+                </div>
+            </div>
+
+            <!-- 3. Action Trial yang Dilakukan (CRUD) -->
             <div class="space-y-4 pt-4 border-t border-slate-100">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center space-x-2">
                         <i class="fa-solid fa-list-check text-indigo-600"></i>
-                        <span>2. Action Trial yang Dilakukan</span>
+                        <span>3. Action Trial yang Dilakukan</span>
                     </h2>
                     <button onclick="addActionTrialItem()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg border border-indigo-200 transition flex items-center space-x-1">
                         <i class="fa-solid fa-plus text-[10px]"></i>
                         <span>Tambah Action</span>
                     </button>
                 </div>
-                <p class="text-xs text-slate-500">Tambahkan rangkaian tahapan action pengujian yang dilakukan beserta parameter targetnya.</p>
+                <p class="text-xs text-slate-500">Tambahkan rangkaian tahapan action pengujian yang dilakukan beserta parameter targetnya (akan bertambah ke bawah).</p>
                 
-                <!-- Container list action trial -->
                 <div id="actionTrialContainer" class="space-y-4">
                     <!-- Dinamis item akan di-generate via JavaScript -->
                 </div>
             </div>
 
-            <!-- 3. Hasil & Analisis PICA -->
+            <!-- 4. Analisis PICA (Problem Identification & Corrective Action sesuai Referensi) -->
             <div class="space-y-4 pt-4 border-t border-slate-100">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center space-x-2">
-                        <i class="fa-solid fa-chart-pie text-indigo-600"></i>
-                        <span>3. Hasil Akhir & Analisis PICA</span>
+                        <i class="fa-solid fa-table-list text-indigo-600"></i>
+                        <span>4. Analisis PICA (Problem, Corrective Action, Root Cause)</span>
                     </h2>
-                    <select id="trialStatus" onchange="updatePreview()" class="text-xs font-semibold px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg focus:outline-none">
-                        <option value="Conditional PASS">Status: PASS DENGAN CATATAN</option>
-                        <option value="FULL PASS">Status: PASS SEPENUHNYA</option>
+                    <button onclick="addPicaRow()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg border border-indigo-200 transition flex items-center space-x-1">
+                        <i class="fa-solid fa-plus text-[10px]"></i>
+                        <span>Tambah Baris PICA</span>
+                    </button>
+                </div>
+                <p class="text-xs text-slate-500">Formulasi temuan masalah, tindakan korektif, Due Date, PIC, Root Cause, dan Note.</p>
+
+                <div id="picaContainer" class="space-y-4">
+                    <!-- Dinamis PICA rows -->
+                </div>
+
+                <div class="pt-2">
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Status Keseluruhan Trial</label>
+                    <select id="trialStatus" onchange="updatePreview()" class="text-xs font-semibold w-full px-3 py-2 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg focus:outline-none">
+                        <option value="Conditional PASS">Status: PASS DENGAN CATATAN (Conditional PASS)</option>
+                        <option value="FULL PASS">Status: PASS SEPENUHNYA (Full Pass)</option>
                         <option value="REJECTED / RETRIAL">Status: GAGAL / RE-TRIAL</option>
                     </select>
                 </div>
-
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Problem (Identifikasi Masalah / Temuan Kritis)</label>
-                        <textarea id="picaProblem" rows="2" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" oninput="updatePreview()">Terdeteksi slip minor pada timing belt sistem penggerak utama saat akselerasi mesin mencapai 115 ppm, mengakibatkan deviasi presisi potong sebesar ±1.5 mm.</textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Investigation (Investigasi Akar Penyebab / Root Cause)</label>
-                        <textarea id="picaInvestigation" rows="2" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" oninput="updatePreview()">Tegangan mekanis pada pegas tensioner penggerak kurang optimal dan cengkeraman gigi pulley sekunder mengalami keausan dini.</textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Correction / Corrective Action (Tindakan Korektif & Preventif)</label>
-                        <textarea id="picaCorrection" rows="2" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" oninput="updatePreview()">1. Menyetel ulang posisi baut pengunci dan menaikkan tegangan pegas tensioner hingga 120N.\n2. Mengganti timing belt standar dengan spesifikasi high-friction bergesekan tinggi.\n3. Melakukan re-alignment total pada poros pemotong.</textarea>
-                    </div>
-                </div>
             </div>
 
-            <!-- 4. Keterangan & Upload Evidence Foto -->
+            <!-- 5. Keterangan & Upload Evidence Foto -->
             <div class="space-y-4 pt-4 border-t border-slate-100">
                 <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center space-x-2">
                     <i class="fa-solid fa-camera text-indigo-600"></i>
-                    <span>4. Keterangan Tambahan & Dokumentasi</span>
+                    <span>5. Keterangan Tambahan & Dokumentasi</span>
                 </h2>
 
                 <div>
                     <label class="block text-xs font-medium text-slate-600 mb-1">Catatan Tambahan & Rekomendasi (Remarks)</label>
-                    <textarea id="reportRemarks" rows="2" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" oninput="updatePreview()">Mesin dinyatakan layak untuk dioperasikan dalam skala produksi massal setelah penyesuaian tension selesai. Penjadwalan verifikasi ulang pasca-produksi ditetapkan minggu depan.</textarea>
+                    <textarea id="reportRemarks" rows="2" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" oninput="updatePreview()">Mesin drilling siap dioperasikan untuk produksi massal setelah penyesuaian frekuensi slider diterapkan.</textarea>
                 </div>
 
                 <!-- Image Uploader -->
@@ -173,6 +198,25 @@
                         </label>
                     </div>
                     <div id="imagePreviewContainer" class="grid grid-cols-2 gap-2 mt-3 empty:hidden"></div>
+                </div>
+            </div>
+
+            <!-- 6. Pengaturan Tanda Tangan (CRUD) -->
+            <div class="space-y-4 pt-4 border-t border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-signature text-indigo-600"></i>
+                        <span>6. Tanda Tangan & Pengesahan Dokumen</span>
+                    </h2>
+                    <button onclick="addSignatureRow()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg border border-indigo-200 transition flex items-center space-x-1">
+                        <i class="fa-solid fa-plus text-[10px]"></i>
+                        <span>Tambah Tanda Tangan</span>
+                    </button>
+                </div>
+                <p class="text-xs text-slate-500">Sesuaikan nama, jabatan, dan keterangan pihak yang bertanda tangan di bawah laporan.</p>
+                
+                <div id="signatureContainer" class="space-y-3">
+                    <!-- Dinamis tanda tangan -->
                 </div>
             </div>
 
@@ -209,16 +253,16 @@
 
         <!-- Wrapper A4 Preview Paper -->
         <div class="flex-1 p-6 md:p-10 flex justify-center items-start">
-            <div id="reportPreview" class="bg-white w-full max-w-[210mm] min-h-[297mm] p-10 shadow-2xl rounded-xl border border-slate-200 flex flex-col justify-between text-slate-800 text-[13px] leading-relaxed relative print-shadow">
+            <div id="reportPreview" class="bg-white w-full max-w-[210mm] min-h-[297mm] p-10 shadow-2xl rounded-xl border border-slate-200 flex flex-col justify-between text-slate-800 text-[12px] leading-relaxed relative print-shadow">
                 
                 <!-- KONTEN UTAMA LAPORAN -->
                 <div>
                     <!-- Kop Surat Perusahaan / Header Dokumen -->
-                    <div class="border-b-2 border-slate-800 pb-5 mb-6 flex justify-between items-start">
+                    <div class="border-b-2 border-slate-800 pb-4 mb-5 flex justify-between items-start">
                         <div>
                             <div class="flex items-center space-x-2">
                                 <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold">PT</div>
-                                <span class="font-bold text-base tracking-wider uppercase text-slate-900">Indospring Applied Technology</span>
+                                <span class="font-bold text-base tracking-wider uppercase text-slate-900">PT. INDUSTRIAL MACHINERY CORP</span>
                             </div>
                             <p class="text-[11px] text-slate-500 mt-1">Divisi Teknik, Riset & Pengembangan Manufaktur</p>
                         </div>
@@ -230,42 +274,64 @@
                     </div>
 
                     <!-- 1. Informasi Umum & Proyek -->
-                    <div class="mb-6">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-3 py-1.5 rounded mb-3 flex items-center justify-between">
+                    <div class="mb-5">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-3 py-1.5 rounded mb-2.5 flex items-center justify-between">
                             <span>1. Informasi Umum & Proyek</span>
                             <span id="prevDepartment" class="text-[11px] text-slate-600 font-medium">Mechanical & Automation R&D</span>
                         </h3>
                         <table class="w-full text-left border-collapse">
                             <tbody>
                                 <tr class="border-b border-slate-100">
-                                    <td class="py-2 pr-4 font-semibold text-slate-600 w-1/4">Nama Mesin / Proyek</td>
-                                    <td class="py-2 font-bold text-slate-900" id="prevProjectTitle">Automatic High-Speed Packaging Machine Line B</td>
+                                    <td class="py-1.5 pr-4 font-semibold text-slate-600 w-1/4">Nama Mesin / Proyek</td>
+                                    <td class="py-1.5 font-bold text-slate-900" id="prevProjectTitle">Automatic High-Speed Drilling Machine Unit A</td>
                                 </tr>
                                 <tr class="border-b border-slate-100">
-                                    <td class="py-2 pr-4 font-semibold text-slate-600">Lead Engineer</td>
-                                    <td class="py-2 text-slate-800" id="prevEngineerName">Ahmad Fauzi, S.T.</td>
+                                    <td class="py-1.5 pr-4 font-semibold text-slate-600">Lead Engineer</td>
+                                    <td class="py-1.5 text-slate-800" id="prevEngineerName">Ahmad Fauzi, S.T.</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2 pr-4 font-semibold text-slate-600 align-top pt-2">Deskripsi Teknis</td>
-                                    <td class="py-2 text-slate-800 pt-2" id="prevMachineDescription">Evaluasi komprehensif performa elektromekanis mesin kemas otomatis kecepatan tinggi untuk memastikan stabilitas operasional kontinu pada parameter kapasitas 120 pack per menit (ppm).</td>
+                                    <td class="py-1.5 pr-4 font-semibold text-slate-600 align-top pt-1.5">Deskripsi Teknis</td>
+                                    <td class="py-1.5 text-slate-800 pt-1.5" id="prevMachineDescription">Evaluasi komprehensif performa elektromekanis mesin drilling otomatis untuk menguji kestabilan feeding, waktu pemakanan, serta tingkat akurasi kedalaman lubang pada berbagai variasi frekuensi.</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- 2. Action Trial yang Dilakukan -->
-                    <div class="mb-6">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-3 py-1.5 rounded mb-3">
-                            2. Rangkaian Action Trial yang Dilakukan
+                    <!-- 2. Data Hasil Pengukuran & Parameter Trial -->
+                    <div class="mb-5">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-3 py-1.5 rounded mb-2.5">
+                            2. Data Hasil Pengukuran & Parameter Trial
                         </h3>
                         <div class="border border-slate-200 rounded-lg overflow-hidden">
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 text-xs">
-                                        <th class="p-2.5 font-bold w-12 text-center">No</th>
-                                        <th class="p-2.5 font-bold w-1/3">Action Trial (Aktivitas Pengujian)</th>
-                                        <th class="p-2.5 font-bold">Parameter / Target Pengujian</th>
-                                        <th class="p-2.5 font-bold w-1/4">Hasil Pengujian</th>
+                                        <th class="p-2 font-bold w-10 text-center">No</th>
+                                        <th class="p-2 font-bold w-1/3">Parameter / Kondisi Pengujian</th>
+                                        <th class="p-2 font-bold">Hasil Pengukuran / Catatan Waktu</th>
+                                        <th class="p-2 font-bold w-1/4">Evaluasi / Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="prevTrialDataTableBody" class="divide-y divide-slate-100 text-slate-800">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 3. Action Trial yang Dilakukan -->
+                    <div class="mb-5">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-3 py-1.5 rounded mb-2.5">
+                            3. Rangkaian Action Trial yang Dilakukan
+                        </h3>
+                        <div class="border border-slate-200 rounded-lg overflow-hidden">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 text-xs">
+                                        <th class="p-2 font-bold w-10 text-center">No</th>
+                                        <th class="p-2 font-bold w-1/3">Action Trial (Aktivitas Pengujian)</th>
+                                        <th class="p-2 font-bold">Parameter / Target Pengujian</th>
+                                        <th class="p-2 font-bold w-1/4">Hasil Pengujian</th>
                                     </tr>
                                 </thead>
                                 <tbody id="prevActionTrialTableBody" class="divide-y divide-slate-100 text-slate-800">
@@ -275,74 +341,58 @@
                         </div>
                     </div>
 
-                    <!-- 3. Hasil & Analisis PICA -->
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-3 bg-slate-100 px-3 py-1.5 rounded">
+                    <!-- 4. Analisis PICA (Sesuai Referensi Gambar) -->
+                    <div class="mb-5">
+                        <div class="flex items-center justify-between mb-2.5 bg-slate-100 px-3 py-1.5 rounded">
                             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">
-                                3. Hasil Akhir & Analisis PICA (Problem, Investigation, Correction)
+                                4. Analisis PICA (Problem Identification & Corrective Action)
                             </h3>
                             <span id="prevStatusBadge" class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">PASS DENGAN CATATAN</span>
                         </div>
 
                         <div class="border border-slate-200 rounded-lg overflow-hidden">
-                            <table class="w-full text-left border-collapse">
-                                <tr class="border-b border-slate-200 bg-slate-50/70">
-                                    <td class="p-2.5 font-bold text-slate-700 w-1/4 border-r border-slate-200 text-xs uppercase">Problem (P)</td>
-                                    <td class="p-2.5 text-slate-800" id="prevPicaProblem">Terdeteksi slip minor pada timing belt sistem penggerak utama saat akselerasi mesin mencapai 115 ppm, mengakibatkan deviasi presisi potong sebesar ±1.5 mm.</td>
-                                </tr>
-                                <tr class="border-b border-slate-200">
-                                    <td class="p-2.5 font-bold text-slate-700 border-r border-slate-200 text-xs uppercase">Investigation (I)</td>
-                                    <td class="p-2.5 text-slate-800" id="prevPicaInvestigation">Tegangan mekanis pada pegas tensioner penggerak kurang optimal dan cengkeraman gigi pulley sekunder mengalami keausan dini.</td>
-                                </tr>
-                                <tr class="bg-slate-50/70">
-                                    <td class="p-2.5 font-bold text-slate-700 border-r border-slate-200 text-xs uppercase">Correction (CA)</td>
-                                    <td class="p-2.5 text-slate-800">
-                                        <ul id="prevPicaCorrectionList" class="list-disc list-inside space-y-1">
-                                            <!-- Populated dynamically -->
-                                        </ul>
-                                    </td>
-                                </tr>
+                            <table class="w-full text-left border-collapse text-[11px]">
+                                <thead>
+                                    <tr class="bg-sky-700 text-white font-bold text-center">
+                                        <th class="p-2 border-r border-sky-600 w-10">No</th>
+                                        <th class="p-2 border-r border-sky-600">Problem Identification</th>
+                                        <th class="p-2 border-r border-sky-600">Corrective Action</th>
+                                        <th class="p-2 border-r border-sky-600 w-20">Due Date</th>
+                                        <th class="p-2 border-r border-sky-600 w-16">PIC</th>
+                                        <th class="p-2 border-r border-sky-600">Root Caused</th>
+                                        <th class="p-2 w-20">Note</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="prevPicaTableBody" class="divide-y divide-slate-200 text-slate-800">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- 4. Keterangan & Evidence Foto -->
-                    <div class="mb-6">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-3 py-1.5 rounded mb-3">
-                            4. Keterangan Tambahan & Dokumentasi Foto
+                    <!-- 5. Keterangan & Evidence Foto -->
+                    <div class="mb-5 page-break-inside-avoid">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-100 px-3 py-1.5 rounded mb-2.5">
+                            5. Keterangan Tambahan & Dokumentasi Foto Evidence
                         </h3>
-                        <p class="text-slate-700 mb-3 bg-slate-50 p-3 rounded-lg border border-slate-200" id="prevRemarks">
-                            Mesin dinyatakan layak untuk dioperasikan dalam skala produksi massal setelah penyesuaian tension selesai. Penjadwalan verifikasi ulang pasca-produksi ditetapkan minggu depan.
+                        <p class="text-slate-700 mb-3 bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-[11px]" id="prevRemarks">
+                            Mesin drilling siap dioperasikan untuk produksi massal setelah penyesuaian frekuensi slider diterapkan.
                         </p>
 
-                        <!-- Tempat Foto Evidence -->
-                <div id="prevImageContainer" class="grid grid-cols-2 gap-3 empty:hidden">
-                    <!-- Dynamically loaded images -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Tanda Tangan / Signatures -->
-                <div class="pt-8 border-t border-slate-200 mt-auto">
-                    <div class="grid grid-cols-3 gap-6 text-center">
-                        <div>
-                            <p class="text-slate-500 text-xs mb-12">Disusun Oleh,</p>
-                            <p class="font-bold text-slate-900 border-b border-slate-300 pb-1" id="signEngineer">Electrical Installer Team</p>
-                            <p class="text-[11px] text-slate-500 mt-0.5">Supervisor</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-500 text-xs mb-12">Disetujui Oleh,</p>
-                            <p class="font-bold text-slate-900 border-b border-slate-300 pb-1">Dickry Junior Triandy</p>
-                            <p class="text-[11px] text-slate-500 mt-0.5">Assistant Manager</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-500 text-xs mb-12">Mengetahui,</p>
-                            <p class="font-bold text-slate-900 border-b border-slate-300 pb-1">Basuki Rahmat</p>
-                            <p class="text-[11px] text-slate-500 mt-0.5">IAT Manager</p>
+                        <!-- Tempat Foto Evidence dengan aspect-ratio dan containment terjaga -->
+                        <div id="prevImageContainer" class="grid grid-cols-2 gap-3 empty:hidden">
+                            <!-- Dynamically loaded images -->
                         </div>
                     </div>
-                    <div class="text-center text-[10px] text-slate-400 mt-8">
-                        Dokumen ini dicetak secara otomatis melalui Sistem Trial Departemen Applied Technology pada <span id="printTimestamp"></span>.
+                </div>
+
+                <!-- Tanda Tangan / Signatures -->
+                <div class="pt-6 border-t border-slate-200 mt-auto page-break-inside-avoid">
+                    <div id="prevSignatureGrid" class="grid grid-cols-3 gap-6 text-center">
+                        <!-- Rendered dynamically -->
+                    </div>
+                    <div class="text-center text-[9px] text-slate-400 mt-6">
+                        Dokumen ini dicetak secara otomatis melalui Sistem Trial Engineering PT. Industrial Machinery Corp pada <span id="printTimestamp"></span>.
                     </div>
                 </div>
 
@@ -357,6 +407,14 @@
         document.getElementById('printTimestamp').innerText = new Date().toLocaleString('id-ID');
 
         let uploadedImages = [];
+
+        // Data Hasil Pengukuran Trial (CRUD)
+        let trialDataRecords = [
+            { parameter: "Drilling Feeding 10 Hz", measurement: "Waktu pemakanan 4.2 detik per lubang kedalaman 25mm", evaluation: "Normal, putaran spindle stabil tanpa getaran berlebih." },
+            { parameter: "Drilling Feeding 12.5 Hz (High Speed)", measurement: "Waktu pemakanan 3.1 detik per lubang", evaluation: "Terdapat sedikit avalan / burr pada sisi material." }
+        ];
+
+        // Action Trial yang Dilakukan (CRUD)
         let actionTrials = [
             {
                 action: "Kalibrasi sensor ketegangan rol penarik utama (tension control unit)",
@@ -369,56 +427,127 @@
                 result: "Suhu stabil pada 180.5°C dengan deviasi termal ±0.2°C."
             },
             {
-                action: "Uji performa kontinu kecepatan penuh dengan muatan penuh",
-                target: "Kapasitas 120 pack per menit selama 60 menit",
-                result: "Terjadi slip minor pada timing belt saat akselerasi di atas 115 ppm."
+                action: "Uji coba pemakanan mesin drilling dengan variasi frekuensi slider",
+                target: "Feeding 10 Hz hingga 10.5 Hz",
+                result: "Avalan berkurang drastis setelah kenaikan frekuensi."
             }
         ];
 
+        // Analisis PICA Sesuai Referensi Gambar (CRUD)
+        let picaRecords = [
+            {
+                problem: "Masih terdapat avalan pada hasil pemotongan/drilling",
+                action: "Menaikan freq slider 10.5 Hz",
+                dueDate: "2026-10-20",
+                pic: "Uno",
+                rootCaused: "Dromos, insert tumpul, Hz kurang",
+                note: "Perlu penggantian insert berkala"
+            }
+        ];
+
+        // Tanda Tangan (CRUD)
+        let signatureRecords = [
+            { role: "Disusun Oleh,", name: "Ahmad Fauzi, S.T.", title: "Project Engineer" },
+            { role: "Disetujui Oleh,", name: "Ir. Budi Santoso", title: "Head of Engineering" },
+            { role: "Mengetahui,", name: "Drs. H. Suherman", title: "Plant Manager" }
+        ];
+
+        // --- RENDER FUNCTIONS FOR FORMS ---
+        function renderAllForms() {
+            renderTrialDataForm();
+            renderActionTrialsForm();
+            renderPicaForm();
+            renderSignatureForm();
+            updatePreview();
+        }
+
+        // 1. Trial Data CRUD Form
+        function renderTrialDataForm() {
+            const container = document.getElementById('trialDataContainer');
+            container.innerHTML = '';
+
+            trialDataRecords.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-50 p-3 rounded-xl border border-slate-200 relative group space-y-2';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">Data #${index + 1}</span>
+                        ${trialDataRecords.length > 1 ? `<button onclick="removeTrialDataRow(${index})" class="text-slate-400 hover:text-rose-600 transition text-xs"><i class="fa-solid fa-trash-can"></i> Hapus</button>` : ''}
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Parameter / Kondisi Pengujian</label>
+                        <input type="text" value="${item.parameter}" oninput="updateTrialDataField(${index}, 'parameter', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Misal: Feeding 10 Hz">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Hasil Pengukuran / Waktu</label>
+                            <input type="text" value="${item.measurement}" oninput="updateTrialDataField(${index}, 'measurement', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Waktu 4.2 detik...">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Evaluasi / Keterangan</label>
+                            <input type="text" value="${item.evaluation}" oninput="updateTrialDataField(${index}, 'evaluation', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Keterangan hasil...">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addTrialDataRow() {
+            trialDataRecords.push({ parameter: "", measurement: "", evaluation: "" });
+            renderAllForms();
+        }
+
+        function removeTrialDataRow(index) {
+            trialDataRecords.splice(index, 1);
+            renderAllForms();
+        }
+
+        function updateTrialDataField(index, field, value) {
+            trialDataRecords[index][field] = value;
+            updatePreview();
+        }
+
+        // 2. Action Trial CRUD Form
         function renderActionTrialsForm() {
             const container = document.getElementById('actionTrialContainer');
             container.innerHTML = '';
 
             actionTrials.forEach((item, index) => {
                 const card = document.createElement('div');
-                card.className = 'bg-slate-50 p-4 rounded-xl border border-slate-200 relative group space-y-3';
+                card.className = 'bg-slate-50 p-3 rounded-xl border border-slate-200 relative group space-y-2';
                 card.innerHTML = `
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">Action #${index + 1}</span>
+                        <span class="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">Action #${index + 1}</span>
                         ${actionTrials.length > 1 ? `<button onclick="removeActionTrialItem(${index})" class="text-slate-400 hover:text-rose-600 transition text-xs"><i class="fa-solid fa-trash-can"></i> Hapus</button>` : ''}
                     </div>
                     <div>
-                        <label class="block text-[11px] font-medium text-slate-600 mb-1">Action Trial yang Dilakukan</label>
-                        <input type="text" value="${item.action}" oninput="updateActionTrialField(${index}, 'action', this.value)" class="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Deskripsi aktivitas...">
+                        <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Action Trial yang Dilakukan</label>
+                        <input type="text" value="${item.action}" oninput="updateActionTrialField(${index}, 'action', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Deskripsi aktivitas...">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-[11px] font-medium text-slate-600 mb-1">Parameter / Target</label>
-                            <input type="text" value="${item.target}" oninput="updateActionTrialField(${index}, 'target', this.value)" class="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Target pengujian...">
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Parameter / Target</label>
+                            <input type="text" value="${item.target}" oninput="updateActionTrialField(${index}, 'target', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Target pengujian...">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-medium text-slate-600 mb-1">Hasil Pengujian</label>
-                            <input type="text" value="${item.result}" oninput="updateActionTrialField(${index}, 'result', this.value)" class="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Hasil aktual...">
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Hasil Pengujian</label>
+                            <input type="text" value="${item.result}" oninput="updateActionTrialField(${index}, 'result', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Hasil aktual...">
                         </div>
                     </div>
                 `;
                 container.appendChild(card);
             });
-            updatePreview();
         }
 
         function addActionTrialItem() {
-            actionTrials.push({
-                action: "",
-                target: "",
-                result: ""
-            });
-            renderActionTrialsForm();
+            actionTrials.push({ action: "", target: "", result: "" });
+            renderAllForms();
         }
 
         function removeActionTrialItem(index) {
             actionTrials.splice(index, 1);
-            renderActionTrialsForm();
+            renderAllForms();
         }
 
         function updateActionTrialField(index, field, value) {
@@ -426,8 +555,116 @@
             updatePreview();
         }
 
+        // 3. PICA Form (Sesuai Referensi Gambar)
+        function renderPicaForm() {
+            const container = document.getElementById('picaContainer');
+            container.innerHTML = '';
+
+            picaRecords.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-50 p-3 rounded-xl border border-slate-200 relative group space-y-2';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">PICA Row #${index + 1}</span>
+                        ${picaRecords.length > 1 ? `<button onclick="removePicaRow(${index})" class="text-slate-400 hover:text-rose-600 transition text-xs"><i class="fa-solid fa-trash-can"></i> Hapus</button>` : ''}
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Problem Identification</label>
+                            <input type="text" value="${item.problem}" oninput="updatePicaField(${index}, 'problem', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="Masalah...">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Corrective Action</label>
+                            <input type="text" value="${item.action}" oninput="updatePicaField(${index}, 'action', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="Tindakan korektif...">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Due Date</label>
+                            <input type="date" value="${item.dueDate}" oninput="updatePicaField(${index}, 'dueDate', this.value)" class="w-full px-2 py-1 text-xs bg-white border border-slate-200 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">PIC</label>
+                            <input type="text" value="${item.pic}" oninput="updatePicaField(${index}, 'pic', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg" placeholder="Nama PIC...">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Root Caused</label>
+                            <input type="text" value="${item.rootCaused}" oninput="updatePicaField(${index}, 'rootCaused', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg" placeholder="Akar masalah...">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Note</label>
+                            <input type="text" value="${item.note}" oninput="updatePicaField(${index}, 'note', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg" placeholder="Catatan...">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addPicaRow() {
+            picaRecords.push({ problem: "", action: "", dueDate: "", pic: "", rootCaused: "", note: "" });
+            renderAllForms();
+        }
+
+        function removePicaRow(index) {
+            picaRecords.splice(index, 1);
+            renderAllForms();
+        }
+
+        function updatePicaField(index, field, value) {
+            picaRecords[index][field] = value;
+            updatePreview();
+        }
+
+        // 6. Signature CRUD Form
+        function renderSignatureForm() {
+            const container = document.getElementById('signatureContainer');
+            container.innerHTML = '';
+
+            signatureRecords.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-50 p-3 rounded-xl border border-slate-200 relative group space-y-2';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">Tanda Tangan #${index + 1}</span>
+                        ${signatureRecords.length > 1 ? `<button onclick="removeSignatureRow(${index})" class="text-slate-400 hover:text-rose-600 transition text-xs"><i class="fa-solid fa-trash-can"></i> Hapus</button>` : ''}
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Label Peran</label>
+                            <input type="text" value="${item.role}" oninput="updateSignatureField(${index}, 'role', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg" placeholder="Disusun Oleh,">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Nama Lengkap</label>
+                            <input type="text" value="${item.name}" oninput="updateSignatureField(${index}, 'name', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg" placeholder="Nama...">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium text-slate-600 mb-0.5">Jabatan</label>
+                            <input type="text" value="${item.title}" oninput="updateSignatureField(${index}, 'title', this.value)" class="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-lg" placeholder="Jabatan...">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addSignatureRow() {
+            signatureRecords.push({ role: "Mengetahui,", name: "Nama Pejabat", title: "Jabatan" });
+            renderAllForms();
+        }
+
+        function removeSignatureRow(index) {
+            signatureRecords.splice(index, 1);
+            renderAllForms();
+        }
+
+        function updateSignatureField(index, field, value) {
+            signatureRecords[index][field] = value;
+            updatePreview();
+        }
+
+        // --- UPDATE PREVIEW SYNC ---
         function updatePreview() {
-            // Get values
             const docNo = document.getElementById('docNo').value;
             const trialDate = document.getElementById('trialDate').value;
             const projectTitle = document.getElementById('projectTitle').value;
@@ -435,12 +672,8 @@
             const department = document.getElementById('department').value;
             const machineDescription = document.getElementById('machineDescription').value;
             const trialStatus = document.getElementById('trialStatus').value;
-            const picaProblem = document.getElementById('picaProblem').value;
-            const picaInvestigation = document.getElementById('picaInvestigation').value;
-            const picaCorrection = document.getElementById('picaCorrection').value;
             const reportRemarks = document.getElementById('reportRemarks').value;
 
-            // Set preview values
             document.getElementById('prevDocNo').innerText = 'No: ' + docNo;
             document.getElementById('prevTrialDate').innerText = trialDate;
             document.getElementById('prevProjectTitle').innerText = projectTitle;
@@ -448,11 +681,6 @@
             document.getElementById('prevDepartment').innerText = department;
             document.getElementById('prevMachineDescription').innerText = machineDescription;
             document.getElementById('prevRemarks').innerText = reportRemarks;
-            document.getElementById('signEngineer').innerText = engineerName;
-
-            // PICA Problem & Investigation
-            document.getElementById('prevPicaProblem').innerText = picaProblem;
-            document.getElementById('prevPicaInvestigation').innerText = picaInvestigation;
 
             // Status Badge styling
             const badge = document.getElementById('prevStatusBadge');
@@ -465,36 +693,70 @@
                 badge.className = "px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-300";
             }
 
+            // Render Trial Data Table in Preview
+            const trialDataBody = document.getElementById('prevTrialDataTableBody');
+            trialDataBody.innerHTML = '';
+            trialDataRecords.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = (index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50') + ' page-break-inside-avoid';
+                tr.innerHTML = `
+                    <td class="p-2 text-center font-semibold text-slate-500 border-b border-slate-100">${index + 1}</td>
+                    <td class="p-2 font-medium text-slate-900 border-b border-slate-100">${item.parameter || '-'}</td>
+                    <td class="p-2 text-slate-700 border-b border-slate-100">${item.measurement || '-'}</td>
+                    <td class="p-2 text-slate-800 font-medium border-b border-slate-100">${item.evaluation || '-'}</td>
+                `;
+                trialDataBody.appendChild(tr);
+            });
+
             // Render Action Trial Table in Preview
             const tableBody = document.getElementById('prevActionTrialTableBody');
             tableBody.innerHTML = '';
             actionTrials.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                tr.className = index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
+                tr.className = (index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50') + ' page-break-inside-avoid';
                 tr.innerHTML = `
-                    <td class="p-2.5 text-center font-semibold text-slate-500 border-b border-slate-100">${index + 1}</td>
-                    <td class="p-2.5 font-medium text-slate-900 border-b border-slate-100">${item.action || '-'}</td>
-                    <td class="p-2.5 text-slate-700 border-b border-slate-100">${item.target || '-'}</td>
-                    <td class="p-2.5 text-slate-800 font-medium border-b border-slate-100">${item.result || '-'}</td>
+                    <td class="p-2 text-center font-semibold text-slate-500 border-b border-slate-100">${index + 1}</td>
+                    <td class="p-2 font-medium text-slate-900 border-b border-slate-100">${item.action || '-'}</td>
+                    <td class="p-2 text-slate-700 border-b border-slate-100">${item.target || '-'}</td>
+                    <td class="p-2 text-slate-800 font-medium border-b border-slate-100">${item.result || '-'}</td>
                 `;
                 tableBody.appendChild(tr);
             });
 
-            // PICA Correction list formatting
-            const corrListContainer = document.getElementById('prevPicaCorrectionList');
-            corrListContainer.innerHTML = '';
-            const corrLines = picaCorrection.split('\n');
-            corrLines.forEach(line => {
-                if(line.trim() !== '') {
-                    let cleanLine = line.replace(/^\d+[\.\)]\s*/, '');
-                    const li = document.createElement('li');
-                    li.innerText = cleanLine;
-                    corrListContainer.appendChild(li);
-                }
+            // Render PICA Table in Preview
+            const picaBody = document.getElementById('prevPicaTableBody');
+            picaBody.innerHTML = '';
+            picaRecords.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = (index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50') + ' page-break-inside-avoid';
+                tr.innerHTML = `
+                    <td class="p-2 text-center font-semibold text-slate-500 border-b border-slate-200 border-r">${index + 1}</td>
+                    <td class="p-2 text-slate-900 border-b border-slate-200 border-r">${item.problem || '-'}</td>
+                    <td class="p-2 text-slate-900 border-b border-slate-200 border-r">${item.action || '-'}</td>
+                    <td class="p-2 text-center text-slate-700 border-b border-slate-200 border-r">${item.dueDate || '-'}</td>
+                    <td class="p-2 text-center font-medium text-slate-800 border-b border-slate-200 border-r">${item.pic || '-'}</td>
+                    <td class="p-2 text-slate-800 border-b border-slate-200 border-r">${item.rootCaused || '-'}</td>
+                    <td class="p-2 text-slate-700 border-b border-slate-200">${item.note || '-'}</td>
+                `;
+                picaBody.appendChild(tr);
+            });
+
+            // Render Signatures Grid
+            const sigGrid = document.getElementById('prevSignatureGrid');
+            sigGrid.className = `grid grid-cols-${Math.min(Math.max(signatureRecords.length, 1), 3)} gap-6 text-center`;
+            sigGrid.innerHTML = '';
+            signatureRecords.forEach(sig => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <p class="text-slate-500 text-[11px] mb-10">${sig.role || ''}</p>
+                    <p class="font-bold text-slate-900 border-b border-slate-300 pb-1 text-xs">${sig.name || '-'}</p>
+                    <p class="text-[10px] text-slate-500 mt-0.5">${sig.title || '-'}</p>
+                `;
+                sigGrid.appendChild(div);
             });
         }
 
-        // Handle Image Upload
+        // --- IMAGE UPLOAD & ASPECT RATIO HANDLING ---
         function handleImageUpload(event) {
             const files = event.target.files;
             if(!files) return;
@@ -522,7 +784,6 @@
             uploadThumbContainer.innerHTML = '';
             prevImageContainer.innerHTML = '';
 
-            // Render thumbnails in sidebar
             uploadedImages.forEach((imgSrc, idx) => {
                 const div = document.createElement('div');
                 div.className = 'relative group rounded-lg overflow-hidden border border-slate-200 bg-slate-100 h-20';
@@ -534,14 +795,14 @@
                 `;
                 uploadThumbContainer.appendChild(div);
 
-                // Render in PDF preview with proper aspect ratio containment to prevent stretching
+                // Render in PDF preview with correct object-contain & container max-height to avoid stretching or blur
                 const prevDiv = document.createElement('div');
                 prevDiv.className = 'border border-slate-200 rounded-lg overflow-hidden bg-slate-50 flex flex-col items-center justify-center';
                 prevDiv.innerHTML = `
-                    <div class="w-full h-40 bg-slate-900 flex items-center justify-center overflow-hidden">
+                    <div class="w-full h-36 bg-slate-900 flex items-center justify-center overflow-hidden p-1">
                         <img src="${imgSrc}" class="max-w-full max-h-full object-contain">
                     </div>
-                    <div class="p-1.5 text-center text-[10px] text-slate-500 bg-white border-t border-slate-200 w-full">Dokumentasi Foto Evidence #${idx + 1}</div>
+                    <div class="p-1 text-center text-[10px] text-slate-500 bg-white border-t border-slate-200 w-full">Foto Evidence #${idx + 1}</div>
                 `;
                 prevImageContainer.appendChild(prevDiv);
             });
@@ -549,18 +810,17 @@
 
         // Reset form
         function resetForm() {
-            if(confirm("Apakah Anda yakin ingin mereset formulir ini?")) {
+            if(confirm("Apakah Anda yakin ingin mereset seluruh formulir laporan ini?")) {
                 document.getElementById('projectTitle').value = '';
                 document.getElementById('machineDescription').value = '';
-                document.getElementById('picaProblem').value = '';
-                document.getElementById('picaInvestigation').value = '';
-                document.getElementById('picaCorrection').value = '';
                 document.getElementById('reportRemarks').value = '';
+                trialDataRecords = [{ parameter: '', measurement: '', evaluation: '' }];
                 actionTrials = [{ action: '', target: '', result: '' }];
-                renderActionTrialsForm();
+                picaRecords = [{ problem: '', action: '', dueDate: '', pic: '', rootCaused: '', note: '' }];
+                signatureRecords = [{ role: "Disusun Oleh,", name: "Ahmad Fauzi, S.T.", title: "Project Engineer" }];
                 uploadedImages = [];
                 renderImages();
-                updatePreview();
+                renderAllForms();
             }
         }
 
@@ -569,7 +829,7 @@
             window.print();
         }
 
-        // Export to PDF using html2pdf
+        // Export to PDF using html2pdf with pristine image handling
         function exportToPDF() {
             const element = document.getElementById('reportPreview');
             const btnText = document.getElementById('pdfBtnText');
@@ -582,7 +842,7 @@
                 margin:       5,
                 filename:     `Laporan_Trial_${(document.getElementById('projectTitle').value || 'Mesin').replace(/\s+/g, '_')}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, logging: false },
+                html2canvas:  { scale: 2, useCORS: true, logging: false, letterRendering: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
@@ -597,9 +857,9 @@
             });
         }
 
-        // Initial render execution on load
+        // Initial execution on load
         window.onload = function() {
-            renderActionTrialsForm();
+            renderAllForms();
         };
     </script>
 </body>
